@@ -356,7 +356,6 @@
             
           <% if user_signed_in? %>
               user_id = <%= @user %>;
-              alert(user_id);
                 $.ajax({
                   method: "POST",
                   url: "losegame",
@@ -561,7 +560,6 @@
                 {
                     <% if user_signed_in? %>
                           user_id = <%= @user %>;
-                          alert(user_id);
                             $.ajax({
                               method: "POST",
                               url: "wingame",
@@ -598,13 +596,11 @@
                 {
                     <% if user_signed_in? %>
                           user_id = <%= @user %>;
-                          alert(user_id);
                             $.ajax({
                               method: "POST",
                               url: "wingame",
                               data: { authenticity_token: $('[name="csrf-token"]')[0].content, id:user_id },
                               success: function(){
-                                  alert(s);
                               },
                                error:function(request,status,error){
                                }
@@ -1325,12 +1321,12 @@
                     <ul>
                       <li style="word-break:break-all;">
                         <% if user_signed_in? %>
-                          <%=@user%>
+                          <%=@user_email%>
                         <% else %>
                           Me
                         <% end %>
                       </li>
-                      <li style="word-break:break-all;">0 win 0 lose</li>
+                      <li style="word-break:break-all;"><%=@wins%> win <%=@loses%> lose</li>
                     </ul>
                   </div>
                   <div class="col m2 s4">

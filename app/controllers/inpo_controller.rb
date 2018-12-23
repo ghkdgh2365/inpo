@@ -21,6 +21,11 @@ class InpoController < ApplicationController
   
   def play2
     @user = current_user.id
+    @user_email = current_user.email
+    @result = Gameresult.where(user_id: @user).last
+    @wins = @result.wins
+    @loses = @result.loses
+    
   end
   
   def wingame

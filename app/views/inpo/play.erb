@@ -544,11 +544,11 @@
             {
                 if (players[0].Havechips.length >= 39)
                 {
-                    alert("Player 0님이 승리하셨습니다.");
+                    alert("Win!");
                 }
                 else
                 {
-                    alert("Player 1님이 승리하셨습니다.");
+                    alert("Lose!");
                 }
                 window.location.reload();
             }
@@ -566,11 +566,11 @@
             {
                 if (players[0].Havechips.length >= 39)
                 {
-                    alert("Player 0님이 승리하셨습니다.");
+                    alert("Win!");
                 }
                 else
                 {
-                    alert("Player 1님이 승리하셨습니다.");
+                    alert("Lose!");
                 }
                 window.location.reload();
             }
@@ -586,7 +586,7 @@
             ptimer = setTimeout(function()
             {
                 giveUp();
-                alert("시간초과ㅠa");
+                alert("Time out!");
             }, 20000); // 20000ms(20초)가 경과하면 이 함수가 실행됩니다.
         }
         
@@ -621,7 +621,7 @@
                     }
                     else
                     {
-                        alert("상대 칩보다 같거나 많이 배팅하셔야합니다.");
+                        alert("Bet more!");
                     }
                 }
                 else
@@ -639,7 +639,7 @@
                     }
                     else
                     {
-                        alert("상대 칩보다 같거나 많이 배팅하셔야합니다.");
+                        alert("Bet more!");
                     }
                 }
                 stopInterval();
@@ -653,7 +653,7 @@
             }
             else
             {
-                alert("배팅을 하셔야합니다.")
+                alert("Bet more!")
             }
                 // if (currentPlayer != players.length-1)
                 // {
