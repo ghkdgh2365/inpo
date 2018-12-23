@@ -1,0 +1,1309 @@
+
+    <script type="text/javascript">
+        var values = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+        var deck = new Array();
+        var chips = new Array();
+        var players = new Array();
+        var currentPlayer = 0;
+        var allCard = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        function createDeck()
+        {
+            deck = new Array();
+            for (var x = 0 ; x < 2; x++)
+            {
+                for (var i = 0 ; i < values.length; i++)
+                {
+                    var weight = parseInt(values[i]);
+                    var card = { Value: values[i], Weight: weight };
+                    deck.push(card);
+                }
+            }
+        }
+        
+        function createPlayers(num)
+        {
+            players = new Array();
+            for(var i = 1; i <= num; i++)
+            {
+                chips = new Array(); //칩만들기
+                for (var x = 0 ; x < 20; x++)
+                {
+                    var chip = { Weight: 1 };
+                    chips.push(chip);
+                }
+                
+                var hand = new Array();
+                var table = new Array();
+                var player = { Name: 'Player ' + i, ID: i, Points: 0, Hand: hand, Betcounts: 0, Table: table, Havechips: chips};
+                players.push(player);
+                
+            }
+        }
+        
+        function createPlayersUI()
+        {
+            document.getElementById('players').innerHTML = '';
+            for(var i = 0; i < players.length; i++)
+            {
+                var div_player = document.createElement('div');
+                var div_playerid = document.createElement('div');
+                var div_hand = document.createElement('div');
+                var div_points = document.createElement('div');
+                var div_table = document.createElement('div');
+                var div_betcounts = document.createElement('div');
+                var div_havechips = document.createElement('div');
+                var div_alert = document.createElement('div');
+
+                div_player.id = 'player_' + i;
+                div_player.className = 'player col m6';
+                div_hand.id = 'hand_' + i;
+                div_hand.className = 'hand col s6';
+                div_points.className = 'points';
+                div_points.id = 'points_' + i;
+                div_table.id = 'table_' + i;
+                div_table.className = 'table';
+                div_betcounts.id = 'betcounts_' + i;
+                div_betcounts.className = 'betcounts col s2';
+                div_havechips.id = 'havechips_' + i;
+                div_havechips.className = 'havechips col s2';
+                div_alert.id = 'alert_' + i;
+                div_alert.className = 'alert col s2';
+                
+                
+                if (players[i].ID == 1)
+                {
+                    div_playerid.innerHTML = "나"
+                }
+                else
+                {
+                    div_playerid.innerHTML = "상대방"
+                }
+                // div_playerid.innerHTML = players[i].ID;
+                div_player.appendChild(div_playerid);
+                div_player.appendChild(div_hand);
+                div_player.appendChild(div_table);
+                div_player.appendChild(div_points);
+                div_player.appendChild(div_betcounts);
+                div_player.appendChild(div_havechips);
+                div_player.appendChild(div_alert);
+                document.getElementById('players').appendChild(div_player);
+                
+                document.getElementById('betcounts_' + i).innerHTML = "배팅한 칩 " + players[i].Table.length;
+                document.getElementById('havechips_' + i).innerHTML = "보유 칩" + players[i].Havechips.length;
+                
+            }
+        }
+        
+        function pastCardCheck(){
+            
+            allCard.splice(allCard.indexOf(players[1].Points),1);
+            
+        }
+        
+        function checkOdds(){
+            
+            var winCard = [];
+            
+            for (var i=0; i<allCard.length; i++){
+                if(allCard[i]>=players[0].Points){
+                    winCard.push(allCard[i]);
+                }
+            }
+            
+            winOdds = (winCard.length/allCard.length)*100;
+            
+        }
+
+        
+        function inputAI_lv2()
+        {
+            setTimeout(function() {
+                
+                if (currentPlayer == 1){
+                    var ai = players[1]
+                    //포기를 하던지
+                    //배팅을 하던지
+                    //콜을 하던지
+                    checkOdds();
+                    if (players[0].Points == 1)
+                    {
+                        var players0Chips = players[0].Table.length + players[0].Havechips.length
+                        var players1Chips = players[1].Table.length + players[1].Havechips.length
+                        var canBetAmount = players0Chips - players[1].Table.length
+                        alert("올인!")
+                        var havechipsnow = players[1].Havechips.length 
+                        if (players0Chips >= players1Chips) 
+                        {
+                            var repeatChipBet1 = function(i, callback) {
+                                setTimeout(function() {
+                                    betChip();
+                                    if (i >= havechipsnow) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet1(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet1(1, function() {
+                                next();
+                                return;
+                            });
+                        }
+                        else
+                        {
+                            var repeatChipBet2 = function(i, callback) {
+                                setTimeout(function() {
+                                    if (currentPlayer == 0)
+                                    {
+                                        return;
+                                    }
+                                    alert("확인");
+                                    if (players0Chips == players[1].Table.length)
+                                    {
+                                        next();
+                                    }
+                                    alert("확인2");
+                                    betChip();
+                                    if (i >= players0Chips) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet2(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet2(1, function() {
+                                if (currentPlayer == 0)
+                                {
+                                    return;
+                                }
+                                next();
+                                return;
+                            });
+                        }
+                    }
+                    else if (winOdds < 40)
+                    {
+                        giveUp();
+                    }
+                    else if (winOdds >= 40 && winOdds < 50)
+                    {
+                        if (players[0].Table.length == 1)
+                        {
+                            betChip();
+                            next();
+                            return;
+                        }
+                        else if (players[0].Table.length > 1)
+                        {
+                            var standard1 = Math.round((players[1].Table.length + players[1].Havechips.length)/4); // 보유칩 1/4
+                            if(players[0].Table.length > standard1){
+                                giveUp();
+                            }
+                            else{
+                                var tablechipsnow = players[0].Table.length - players[1].Table.length
+                                var repeatChipBet = function(i, callback) {
+                                    setTimeout(function() {
+                                        betChip();
+                                        if (i >= tablechipsnow) {
+                                            callback();
+                                        } else {
+                                            repeatChipBet(i+1, callback);
+                                        }
+                                    }, 750);
+                                }
+                                repeatChipBet(1, function() {
+                                    next();
+                                    return;
+                                });
+                            }
+                        }
+                    }
+                    else if (winOdds >= 50 && winOdds < 60)
+                    {
+                        if (players[0].Table.length == 1)
+                        {
+                            betChip();
+                            next();
+                            return;
+                        }
+                        else if (players[0].Table.length > 1)
+                        {
+                            var standard2 = Math.round((players[1].Table.length + players[1].Havechips.length)/2); // 보유칩 1/2
+                            if(players[0].Table.length > standard1){
+                                giveUp();
+                            }
+                            else{
+                                var tablechipsnow = players[0].Table.length - players[1].Table.length
+                                var repeatChipBet = function(i, callback) {
+                                    setTimeout(function() {
+                                        betChip();
+                                        if (i >= tablechipsnow) {
+                                            callback();
+                                        } else {
+                                            repeatChipBet(i+1, callback);
+                                        }
+                                    }, 750);
+                                }
+                                repeatChipBet(1, function() {
+                                    next();
+                                    return;
+                                });
+                            }
+                        }
+                    }
+                    else if (winOdds >= 60 && winOdds < 80)
+                    {
+                        if (players[0].Table.length == 1)
+                        {
+                            betChip();
+                            next();
+                            return;
+                        }
+                        else if (players[0].Table.length > 1)
+                        {
+                            var standard3 = Math.round(((players[1].Table.length + players[1].Havechips.length)/4)*3); // 보유칩 4/3
+                            if(players[0].Table.length > standard1){
+                                giveUp();
+                            }
+                            else{
+                                var tablechipsnow = players[0].Table.length - players[1].Table.length
+                                var repeatChipBet = function(i, callback) {
+                                    setTimeout(function() {
+                                        betChip();
+                                        if (i >= tablechipsnow) {
+                                            callback();
+                                        } else {
+                                            repeatChipBet(i+1, callback);
+                                        }
+                                    }, 750);
+                                }
+                                repeatChipBet(1, function() {
+                                    next();
+                                    return;
+                                });
+                            }
+                        }
+                    }
+                    else if (winOdds >= 80 && winOdds < 90)
+                    {
+                        if (players[0].Table.length == 1)
+                        {
+                            betChip();
+                            next();
+                            return;
+                        }
+                        else if (players[0].Table.length > 1)
+                        {
+                            var standard4 = Math.round(((players[1].Table.length + players[1].Havechips.length)/6)*5); // 보유칩 5/6
+                            if(players[0].Table.length > standard1){
+                                giveUp();
+                            }
+                            else{
+                                var tablechipsnow = players[0].Table.length - players[1].Table.length
+                                var repeatChipBet = function(i, callback) {
+                                    setTimeout(function() {
+                                        betChip();
+                                        if (i >= tablechipsnow) {
+                                            callback();
+                                        } else {
+                                            repeatChipBet(i+1, callback);
+                                        }
+                                    }, 750);
+                                }
+                                repeatChipBet(1, function() {
+                                    next();
+                                    return;
+                                });
+                            }
+                        }
+                    }
+                    else if (winOdds >= 90)
+                    {
+                        var players0Chips = players[0].Table.length + players[0].Havechips.length
+                        var players1Chips = players[1].Table.length + players[1].Havechips.length
+                        var canBetAmount = players0Chips - players[1].Table.length
+                        alert("올인!")
+                        var havechipsnow = players[1].Havechips.length 
+                        if (players0Chips >= players1Chips) 
+                        {
+                            var repeatChipBet1 = function(i, callback) {
+                                setTimeout(function() {
+                                    betChip();
+                                    if (i >= havechipsnow) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet1(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet1(1, function() {
+                                next();
+                                return;
+                            });
+                        }
+                        else
+                        {
+                            var repeatChipBet2 = function(i, callback) {
+                                setTimeout(function() {
+                                    if (currentPlayer == 0)
+                                    {
+                                        return;
+                                    }
+                                    alert("확인");
+                                    if (players0Chips == players[1].Table.length)
+                                    {
+                                        next();
+                                        return;
+                                    }
+                                    alert("확인2");
+                                    betChip();
+                                    if (i >= players0Chips) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet2(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet2(1, function() {
+                                if (currentPlayer == 0)
+                                {
+                                    return;
+                                }
+                                next();
+                                return;
+                            });
+                        }
+                    }
+                }
+                    
+            }, 3000)
+        }
+        function inputAI()
+        {
+            
+            setTimeout(function() {
+                
+                if (currentPlayer == 1){
+                    var ai = players[1]
+                    //포기를 하던지
+                    //배팅을 하던지
+                    //콜을 하던지
+                    if (players[0].Points > 5)
+                    {
+                        giveUp();
+                    }
+                    else if (players[0].Points <= 5 && players[0].Points >= 3)
+                    {
+                        if (players[0].Table.length == 1)
+                        {
+                            betChip();
+                            next();
+                        }
+                        else if (players[0].Table.length > 1)
+                            {
+                                var tablechipsnow = players[0].Table.length - players[1].Table.length
+                                var repeatChipBet = function(i, callback) {
+                                    setTimeout(function() {
+                                        betChip();
+                                        if (i >= tablechipsnow) {
+                                            callback();
+                                        } else {
+                                            repeatChipBet(i+1, callback);
+                                        }
+                                    }, 750);
+                                }
+                                
+                                repeatChipBet(1, function() {
+                                    next();
+                                });
+                            }
+                            else
+                            {
+                                alert("예외");
+                            }
+                    }
+                    else
+                    {
+                        var players0Chips = players[0].Table.length + players[0].Havechips.length
+                        var players1Chips = players[1].Table.length + players[1].Havechips.length
+                        var canBetAmount = players0Chips - players[1].Table.length
+                        alert("올인!")
+                        var havechipsnow = players[1].Havechips.length 
+                        if (players0Chips >= players1Chips) 
+                        {
+                            var repeatChipBet1 = function(i, callback) {
+                                setTimeout(function() {
+                                    betChip();
+                                    if (i >= havechipsnow) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet1(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet1(1, function() {
+                                next();
+                            });
+                        }
+                        else
+                        {
+                            var repeatChipBet2 = function(i, callback) {
+                                setTimeout(function() {
+                                    if (currentPlayer == 0)
+                                    {
+                                        return;
+                                    }
+                                    if (players0Chips == players[1].Table.length)
+                                    {
+                                        next();
+                                    }
+                                    betChip();
+                                    if (i >= havechipsnow) {
+                                        callback();
+                                    } else {
+                                        repeatChipBet2(i+1, callback);
+                                    }
+                                }, 300);
+                            }
+                            
+                            repeatChipBet2(1, function() {
+                                next();
+                            });
+                        }
+                    }
+                }
+                    
+            }, 3000)
+            
+        }
+        
+        function shuffle()
+        {
+            // for 1000 turns
+            // switch the values of two random cards
+            for (var i = 0; i < 1000; i++)
+            {
+                var location1 = Math.floor((Math.random() * deck.length));
+                var location2 = Math.floor((Math.random() * deck.length));
+                var tmp = deck[location1];
+
+                deck[location1] = deck[location2];
+                deck[location2] = tmp;
+            }
+        }
+        
+        // function start()
+        // {
+        //     // deal 2 cards to every player object
+        //     currentPlayer = 0;
+        //     dealHands();
+        //     document.getElementById('player_' + currentPlayer).classList.add('active');
+        //     for (var x = 0; x < players.length; x++)
+        //     {
+        //         var chip = players[x].Havechips.pop();
+        //         players[x].Table.push(chip);
+        //     }
+            
+        // }
+        function defaultChip()
+        {
+            for (var x = 0; x < players.length; x++)
+            {
+                var chip = players[x].Havechips.pop();
+                players[x].Table.push(chip);
+            }
+        }
+        function start()
+        {
+            document.getElementById("start").disabled = true;
+            document.getElementById("reset").disabled = false;
+            document.getElementById("next").disabled = false;
+            document.getElementById("betChip").disabled = false;
+            document.getElementById("allIn").disabled = false;
+            document.getElementById("giveUp").disabled = false;
+            // deal 2 cards to every player object
+            currentPlayer = 0;
+            createDeck();
+            shuffle();
+            createPlayers(2);
+            createPlayersUI();
+            dealHands();
+            allCard.splice(allCard.indexOf(players[0].Points),1);
+            // renderChip(0);
+            // renderChip(1);
+            
+            playerTimer();
+            // renderHavechips(0);
+            // renderHavechips(1);
+            
+            document.getElementById('player_' + currentPlayer).classList.add('active');
+            defaultChip();
+            betAndChip();
+            timerUI();
+        }
+        
+        function dealHands()
+        {
+            // 1장씩 카드 나눠주기
+                for (var x = 0; x < players.length; x++)
+                {
+                    var card = deck.pop();
+                    players[x].Hand.push(card);
+                    renderCard(card, x);
+                    updatePoints();
+                }
+            // cardOpenComputer();    
+            updateDeck();
+            cardNumber();
+        }
+        
+        function betChip()
+        {
+            if (players[currentPlayer].Havechips.length > 0)
+            {
+                document.getElementById('alert_' + currentPlayer).innerHTML = "Bet!";
+                if (currentPlayer == 0)
+                {
+                    if (players[0].Table.length == players[1].Havechips.length + players[1].Table.length)
+                    {
+                        alert("상대의 총 칩 수가 " + players[0].Table.length +"입니다.")
+                        next();
+                        return
+                    }
+                    if (players[1].Havechips == 0)
+                    {
+                        if (players[currentPlayer].Table.length >= players[1].Table.length)
+                        {
+                            alert("상대가 올인입니다.")
+                            end();
+                            return
+                        }
+                    }
+                }
+                if (currentPlayer == 1)
+                {
+                    if ((players[1].Table.length) == (players[0].Havechips.length + players[0].Table.length))
+                    {
+                        alert("상대의 총 칩 수가 " + players[1].Table.length +"입니다.")
+                        next();
+                        return
+                    }
+                    if (players[0].Havechips == 0)
+                    {
+                        if (players[currentPlayer].Table.length >= players[0].Table.length)
+                        {
+                            alert("상대가 올인입니다.")
+                            end();
+                            return
+                        }
+                    }
+                }
+                var chip = players[currentPlayer].Havechips.pop();
+                players[currentPlayer].Table.push(chip);
+                // renderChip(currentPlayer);
+                updateBetcounts();
+                updateHavechips();
+            }
+            else
+            {
+                document.getElementById('alert_' + currentPlayer).innerHTML = "All IN!";
+                // alert("올인입니다.");
+            }
+        }
+        
+        // function renderChip(currentPlayer) 칩 보여주는거
+        // {
+        //     var table = document.getElementById('table_' + currentPlayer);
+        //     table.appendChild(getChipUI());
+        // }
+        
+        // function renderHavechip(currentPlayer)
+        // {
+        //     var havechips = document.getElementById('havechips_' + currentPlayer);
+        //     havechips.appendChild(getHavechipUI());
+        // }
+        
+        function renderCard(card, player)
+        {
+            var hand = document.getElementById('hand_' + player);
+            hand.appendChild(getCardUI(card));
+        }
+        
+        function getChipUI()
+        {
+            var ele = document.createElement('div');
+            ele.className = 'chip';
+            ele.innerHTML = '썬칩';
+            return ele;
+        }
+        
+        function removeChip()
+        {
+            for (var x = 0; x < players.length; x++)
+            {
+                var chip = document.getElementById('table_' + x)
+                while (chip.firstChild) {
+                    chip.removeChild(chip.firstChild);
+                }
+            }
+        }
+        // function getHavechipUI()
+        // {
+        //     var elem = document.createElement('div');
+        //     elem.className = 'chip';
+        //     elem.innerHTML = '썬칩';
+        //     return elem;
+        // }
+        
+        function getCardUI(card)
+        {
+            var el = document.createElement('div');
+            el.className = 'card';
+            el.innerHTML = '#';
+            // el.innerHTML = '#' + card.Value;
+            return el;
+        }
+        
+        function cardNumber()
+        {
+            var hand1 = document.getElementById('hand_1');
+            var card1 = hand1.getElementsByClassName('card');
+            card1[0].innerText = '#' + players[1].Points;
+
+        }
+        
+        function removeCardUI()
+        {
+            for (var x = 0; x < players.length; x++)
+            {
+                var card = document.getElementById('hand_' + x)
+                card.removeChild(card.childNodes[0]);
+            }
+        }
+        
+        function getPoints(player)
+        {
+            var points = 0;
+            for(var i = 0; i < players[player].Hand.length; i++)
+            {
+                points = players[player].Hand[i].Weight;
+            }
+            players[player].Points = points;
+            return points;
+        }
+        
+        function updatePoints()
+        {
+            for (var i = 0 ; i < players.length; i++)
+            {
+                getPoints(i);
+            }
+            // document.getElementById('points_' + 1).innerHTML = players[1].Points;
+        }
+        
+        function updateBetcounts()
+        {
+            document.getElementById('betcounts_' + currentPlayer).innerHTML = "배팅한 칩 " + players[currentPlayer].Table.length;
+        }
+        
+        function updateHavechips()
+        {
+            document.getElementById('havechips_' + currentPlayer).innerHTML = "보유 칩 " + players[currentPlayer].Havechips.length;
+            if (players[0].Havechips.length >= 39 || players[1].Havechips.length >= 39)
+            {
+                if (players[0].Havechips.length >= 39)
+                {
+                    alert("Player 0님이 승리하셨습니다.");
+                }
+                else
+                {
+                    alert("Player 1님이 승리하셨습니다.");
+                }
+                window.location.reload();
+            }
+        }
+        
+        function betAndChip()
+        {
+            for (var i = 0; i < players.length; i++)
+            {
+                document.getElementById('betcounts_' + i).innerHTML = "배팅한 칩 " + players[i].Table.length;
+                document.getElementById('havechips_' + i).innerHTML = "보유 칩 " + players[i].Havechips.length;
+            }
+            if (players[0].Havechips.length >= 39 || players[1].Havechips.length >= 39)
+            {
+                if (players[0].Havechips.length >= 39)
+                {
+                    alert("Player 0님이 승리하셨습니다.");
+                }
+                else
+                {
+                    alert("Player 1님이 승리하셨습니다.");
+                }
+                window.location.reload();
+            }
+        }
+        
+        function updateDeck()
+        {
+            document.getElementById('deckcount').innerHTML = '남은 카드 수:' + deck.length + '/20';
+        }
+        
+        function playerTimer()
+        {
+            ptimer = setTimeout(function()
+            {
+                giveUp();
+                alert("시간초과ㅠa");
+            }, 20000); // 20000ms(20초)가 경과하면 이 함수가 실행됩니다.
+        }
+        
+        function stopTimer()
+        {
+            clearTimeout(ptimer);
+        }
+        
+        function next()
+        {
+            if ( players[currentPlayer].Table.length > 1 || players[currentPlayer].Havechips.length == 0)
+            {
+                if ( players[0].Table.length == players[1].Table.length)
+                {
+                    end();
+                    return;
+                }
+                if ( currentPlayer == 0 )
+                {
+                    if ( players[0].Table.length >= players[1].Table.length)
+                    {
+                        document.getElementById('player_' + currentPlayer).classList.remove('active');
+                        currentPlayer += 1;
+                        document.getElementById('player_' + currentPlayer).classList.add('active');
+                        document.getElementById("reset").disabled = true;
+                        document.getElementById("next").disabled = true;
+                        document.getElementById("betChip").disabled = true;
+                        document.getElementById("allIn").disabled = true;
+                        document.getElementById("giveUp").disabled = true;
+                    }
+                    else
+                    {
+                        alert("상대 칩보다 같거나 많이 배팅하셔야합니다.");
+                    }
+                    
+                }
+                else
+                {
+                    if ( players[0].Table.length <= players[1].Table.length)
+                    {
+                        document.getElementById('player_' + currentPlayer).classList.remove('active');
+                        currentPlayer -= 1;
+                        document.getElementById('player_' + currentPlayer).classList.add('active');
+                        document.getElementById("reset").disabled = false;
+                        document.getElementById("next").disabled = false;
+                        document.getElementById("betChip").disabled = false;
+                        document.getElementById("allIn").disabled = false;
+                        document.getElementById("giveUp").disabled = false;
+                    }
+                    else
+                    {
+                        alert("상대 칩보다 같거나 많이 배팅하셔야합니다.");
+                    }
+                }
+                stopInterval();
+                stopTimer();
+                timerUI();
+                playerTimer();
+                inputAI();
+            }
+            else if (currentPlayer == 0 && players[1].Havechips == 0 && players[1].Table.length == 1){
+                document.getElementById('player_' + currentPlayer).classList.remove('active');
+                currentPlayer += 1;
+                document.getElementById('player_' + currentPlayer).classList.add('active');
+                document.getElementById("reset").disabled = true;
+                document.getElementById("next").disabled = true;
+                document.getElementById("betChip").disabled = true;
+                document.getElementById("allIn").disabled = true;
+                document.getElementById("giveUp").disabled = true;
+            }
+            else 
+            {
+                alert("배팅을 하셔야합니다.")
+            }
+                // if (currentPlayer != players.length-1)
+                // {
+                //     document.getElementById('player_' + currentPlayer).classList.remove('active');
+                //     currentPlayer += 1;
+                //     document.getElementById('player_' + currentPlayer).classList.add('active');
+                // }
+                // // move on to next player, if any
+                // else {
+                //     document.getElementById('player_' + currentPlayer).classList.remove('active');
+                //     currentPlayer -= 1;
+                //     document.getElementById('player_' + currentPlayer).classList.add('active');
+                // }
+            
+        }
+        
+        function giveUp()
+        {
+            openCard();
+            pastCardCheck();
+            document.getElementById('alert_' + currentPlayer).innerHTML = "Die!";
+            if (currentPlayer == 0)
+            {
+                document.getElementById('status').innerHTML = 'Winner: 상대방 ';
+                for(var i = 0; i < players.length; i++)
+                {
+                    var tableLength = players[i].Table.length
+                    for(var x = 0; x < tableLength; x++)
+                    {
+                        var chip = players[i].Table.pop();
+                        players[1].Havechips.push(chip);
+                        // alert("테이블 랭스:" + players[i].Table.length);
+                    }
+                }
+            }
+            else
+            {
+                document.getElementById('status').innerHTML = 'Winner: 나 ';
+                for(var i = 0; i < players.length; i++)
+                {
+                    var tableLength = players[i].Table.length
+                    for(var x = 0; x < tableLength; x++)
+                    {
+                        var chip = players[i].Table.pop();
+                        players[0].Havechips.push(chip);
+                        // alert("테이블 랭스:" + players[i].Table.length);
+                    }
+                }
+            }
+            
+            stopTimer();
+            stopInterval();
+            
+            setTimeout(function() {
+                document.getElementById('status').innerHTML = 'Winner: ';
+                document.getElementById('status').classList.remove('active');
+                document.getElementById('alert_' + currentPlayer).innerHTML = "";
+                removeCardUI();
+                removeChip();
+                
+                if (deck.length == 0)
+                {
+                    createDeck();
+                    shuffle();
+                    allCard = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                }
+                
+                dealHands();
+                allCard.splice(allCard.indexOf(players[0].Points),1);
+                document.getElementById('points_' + 0).innerHTML = "";
+                document.getElementById('player_' + currentPlayer).classList.add('active');
+                
+                if ( currentPlayer == 0) {
+                    document.getElementById("reset").disabled = false;
+                    document.getElementById("next").disabled = false;
+                    document.getElementById("betChip").disabled = false;
+                    document.getElementById("allIn").disabled = false;
+                    document.getElementById("giveUp").disabled = false;
+                }
+                
+                defaultChip();
+                betAndChip();
+                // renderChip(0);
+                // renderChip(1);
+                
+                playerTimer();
+                timerUI();
+                inputAI();
+            }, 3000)
+        }
+        
+        function end()
+        {
+            openCard();
+            pastCardCheck();
+            stopInterval();
+            stopTimer();
+            document.getElementById('player_' + currentPlayer).classList.remove('active');
+            if (players[0].Points > players[1].Points)
+            {
+                currentPlayer = 1;
+                document.getElementById('status').innerHTML = 'Winner: 나 ';
+                for(var i = 0; i < players.length; i++)
+                {
+                    var tableLength = players[i].Table.length
+                    for(var x = 0; x < tableLength; x++)
+                    {
+                        var chip = players[i].Table.pop();
+                        players[0].Havechips.push(chip);
+                    }
+                }
+                
+            }else{
+                if (players[0].Points < players[1].Points)
+                {
+                    currentPlayer = 0;
+                    document.getElementById('status').innerHTML = 'Winner: 상대방 ';
+                    for(var i = 0; i < players.length; i++)
+                    {
+                        var tableLength = players[i].Table.length
+                        for(var x = 0; x < tableLength; x++)
+                        {
+                            var chip = players[i].Table.pop();
+                            players[1].Havechips.push(chip);
+                        }
+                    }
+                    
+                }else{
+                    if (players[0].Points == players[1].Points)
+                    {
+                        currentPlayer = 0;
+                        document.getElementById('status').innerHTML = 'draw';
+                        for(var i = 0; i < players.length; i++)
+                        {
+                            var tableLength = players[i].Table.length
+                            for(var x = 0; x < tableLength; x++)
+                            {
+                                var chip = players[i].Table.pop();
+                                players[i].Havechips.push(chip);
+                            }
+                        }
+                        // 드로우가 되면 배팅 된 칩은 그대로 가져가기
+                        
+                        setTimeout(function() {
+                            document.getElementById('status').innerHTML = 'Winner: ';
+                            document.getElementById('status').classList.remove('active');
+                            removeCardUI();
+                            removeChip();
+                            
+                            if (deck.length == 0)
+                            {
+                                createDeck();
+                                shuffle();
+                                allCard = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                            }
+                            
+                            dealHands();
+                            allCard.splice(allCard.indexOf(players[0].Points),1);
+                            
+                            document.getElementById('points_' + 0).innerHTML = "";
+                            document.getElementById('player_' + currentPlayer).classList.add('active');
+                            if ( currentPlayer == 0) {
+                                document.getElementById("reset").disabled = false;
+                                document.getElementById("next").disabled = false;
+                                document.getElementById("betChip").disabled = false;
+                                document.getElementById("allIn").disabled = false;
+                                document.getElementById("giveUp").disabled = false;
+                            }
+                            timerUI();
+                            playerTimer();
+                            defaultChip();
+                            betAndChip();
+                            // renderChip(0);
+                            // renderChip(1);
+                            inputAI();
+                        }, 3000)
+                        return;
+                    }
+                }
+            }
+            
+            // 다시 새롭게 세팅
+            setTimeout(function() {
+                document.getElementById('status').innerHTML = 'Winner: ';
+                document.getElementById('status').classList.remove('active');
+                removeCardUI();
+                removeChip();
+                
+                if (deck.length == 0)
+                {
+                    createDeck();
+                    shuffle();
+                    allCard = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                }
+                
+                dealHands();
+                allCard.splice(allCard.indexOf(players[0].Points),1);
+                document.getElementById('points_' + 0).innerHTML = "";
+                document.getElementById('player_' + currentPlayer).classList.add('active');
+                if ( currentPlayer == 0) {
+                    document.getElementById("reset").disabled = false;
+                    document.getElementById("next").disabled = false;
+                    document.getElementById("betChip").disabled = false;
+                    document.getElementById("allIn").disabled = false;
+                    document.getElementById("giveUp").disabled = false;
+                }
+                defaultChip();
+                timerUI();
+                playerTimer();
+                betAndChip();
+                // renderChip(0);
+                // renderChip(1);
+                inputAI();
+            }, 3000)
+            
+        }
+        
+        window.addEventListener('load', function(){
+            createDeck();
+            shuffle();
+            createPlayers(1);
+        });
+        
+        function openCard()
+        {
+            // document.getElementById('points_' + 0).innerHTML = players[0].Points;
+            var handGet = document.getElementById('hand_' + 0);
+            var cardGet = handGet.getElementsByClassName('card');
+            cardGet[0].innerHTML = '#' + players[0].Points;
+            document.getElementById('status').classList.add('active');
+            for (var i = 0; i < players.length; i++){
+                document.getElementById('alert_' + i).innerHTML = "";
+            }
+        }
+        
+        // function cardOpenComputer()
+        // {
+        //     var handGet = document.getElementById('hand_' + 1);
+        //     var cardGet = handGet.getElementsByClassName('card');
+        //     cardGet[0].innerHTML = '#' + players[1].Points;
+        // }
+        
+        function timerUI()
+        {
+            timer = 20;
+            interval = setInterval(function() {
+                timer--;
+                $('.timer').text(timer);
+                if (timer === 0) clearInterval(interval);
+            }, 1000);
+        }
+        
+        function stopInterval()
+        {
+            clearInterval(interval);
+        }
+        
+        function allIn()
+        {
+            if ( currentPlayer == 0) {
+                document.getElementById("reset").disabled = true;
+                document.getElementById("next").disabled = true;
+                document.getElementById("betChip").disabled = true;
+                document.getElementById("allIn").disabled = true;
+                document.getElementById("giveUp").disabled = true;
+            }
+            
+            var players0Chips = players[0].Table.length + players[0].Havechips.length
+            var players1Chips = players[1].Table.length + players[1].Havechips.length
+            alert("올인!")
+            var havechipsnow = players[0].Havechips.length 
+            if (players0Chips >= players1Chips) 
+            {
+                var repeatChipBet1 = function(i, callback) {
+                    setTimeout(function() {
+                        if (players[0].Table.length == players[1].Havechips.length + players[1].Table.length)
+                        {
+                            alert("상대의 총 칩 수가 " + players[0].Table.length +"입니다.")
+                            next();
+                            return
+                        }
+                        betChip();
+                        if (i >= havechipsnow) {
+                            callback();
+                        } else {
+                            repeatChipBet1(i+1, callback);
+                        }
+                    }, 300);
+                }
+                
+                repeatChipBet1(1, function() {
+                    next();
+                });
+            }
+            else
+            {
+                var repeatChipBet2 = function(i, callback) {
+                    setTimeout(function() {
+                        betChip();
+                        if (i >= havechipsnow) {
+                            callback();
+                        } else {
+                            repeatChipBet2(i+1, callback);
+                        }
+                    }, 300);
+                }
+                
+                repeatChipBet2(1, function() {
+                    next();
+                });
+            }
+        }
+        function reset()
+        {
+            window.location.reload(false); 
+        }
+        
+        function startDisabled() {
+            document.getElementById("start").disabled = true;
+        }
+        if (location.href.match('#')) {
+          str = location.href
+          strRe = str.replace("#", "");
+          window.location.href = strRe;
+        }
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+    </script>
+    <style>
+        .game
+        {
+            width: 100%;
+            border: solid 1px #ddd;
+            margin: 0 auto;
+            padding: 30px;
+            padding-left :0px; padding-right :0px;
+        }
+        
+        .card{
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: solid 1px #808080;
+            background-color: white;
+            display: inline-block;
+            border-radius: 10px;
+            font-size: 17pt;
+            text-align: center;
+            margin: 3px;
+        }
+        
+        #deck > .card{
+            width: 70%;
+        }
+        
+        .chip{
+            width: 10px;
+            height: 10px;
+            padding: 10px;
+            border: solid 1px #808080;
+            background-color: brown;
+            display: inline-block;
+            border-radius: 10px;
+            font-size: 8pt;
+            text-align: center;
+            margin: 3px;
+        }
+        
+        .players{
+            width: 100%;
+            display:flex;
+            flex-direction: column-reverse;
+        }
+        
+        .player{
+            width: 100%;
+            height: auto;
+            border: solid 2px #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            display: inline-block;
+            margin:0 auto;
+            vertical-align: center;
+            height: auto;
+        }
+        
+        .player.active{
+            border: solid 2px #1caff6;
+        }
+        
+        .active{
+            border: solid 2px #1caff6;
+        }
+        
+        .points{
+            text-align: center;
+            font-size: 20pt;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .deck{
+            float:right;
+            width: 100%;
+        }
+        
+        .timer {
+          font-size: 2.5em;
+          padding: 10px;
+          text-align: center;
+          margin: 0 auto;
+          border: solid #ee6e73;
+          border-width :thin;
+          border-radius: 10px;
+          color :rgba(110, 99, 99, 0.87);
+        }
+        body{
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+        }
+        footer {
+            flex: 1 0 auto;
+        }
+        .page-footer{
+            background-color :white;
+        }
+        
+        .btn, .btn-large, .btn-small{
+            background-color :#ee6e73;
+        }
+        .ad {
+            border :1px solid grey;
+            height : 50px;
+        }
+        
+        #deckcount{
+            font-size: 13px;
+        }
+    </style>
+<div class="container">
+    <div class="game" style="padding-bottom: 0px;padding-top: 5px;">
+        <div class="row">
+            <div class="col s3 m3" style="text-align:center;">타이머</div>
+            <div class="col s3 m3 timer">20</div>
+            <div id="deck" class="deck col s5 m4">
+                <div class="card" id="deckcount">20/20</div>
+                <div class="status" id="status"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="players" class="players"></div>
+        </div>
+    </div>
+</div>
+<footer class="page-footer" style="padding-top: 0px;">
+    <div class="container">
+        <div class="footer-copyright">
+            <div class="row">
+                <div class="col s4"><input type="button" class="btn" id="start" value="start" onclick="start()" /></div>
+                <div class="col s4"><input type="button" class="btn" id="reset" value="reset" onclick="reset()" disabled/></div>
+                <div class="col s4"><input type="button" class="btn" id="next" value="next" onclick="next()" disabled/></div>
+                <div class="col s4"><input type="button" class="btn" id="betChip" value="bet" onclick="betChip()" disabled/></div>
+                <div class="col s4"><input type="button" class="btn" id="allIn" value="allIn" onclick="allIn()" disabled/></div>
+                <div class="col s4"><input type="button" class="btn" id="giveUp" value="Die" onclick="giveUp()" disabled/></div>
+            </div>
+        </div>
+    </div>
+    
+
+ 
+</footer>
+<div class="ad"></div>

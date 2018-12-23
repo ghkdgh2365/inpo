@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Indian Poker</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application' %>
+    
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
+        <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+
+  </head>
+
+  <body>
+    
+      <nav>
+        <div class="nav-wrapper" style="background-color: #ee6e73;">
+          <div class="container">
+            <a class="brand-logo" style="color: white;">Indian Poker</a>
+            <a href="" data-target="mobile-demo" class="sidenav-trigger" style="color: white;"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+              <li><a href="/">Home</a></li>
+              <li><a href="/inpo/license">license</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    
+      <ul class="sidenav" id="mobile-demo">
+        <li><a href="/">Home</a></li>
+        <li><a href="/inpo/license">license</a></li>
+      </ul>
+    <%= yield %>
+  </body>
+  <style>
+    nav .brand-logo{
+      font-size :1.5rem; padding-left :25px; color :#ee6e73;
+    }
+    nav {
+      background-color :white;
+    }
+    nav a{
+      color :#ee6e73;
+    }
+    nav ul a{
+      color :#ee6e73;
+    }
+  </style>
+  <script>
+    var elem = document.querySelector('.sidenav');
+    var instance = new M.Sidenav(elem);
+  
+    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+    // var collapsibleElem = document.querySelector('.collapsible');
+    // var collapsibleInstance = new M.Collapsible(collapsibleElem, options);
+  
+    // Or with jQuery
+  
+    $(document).ready(function(){
+      $('.sidenav').sidenav();
+    });
+          
+      
+  </script>
+</html>

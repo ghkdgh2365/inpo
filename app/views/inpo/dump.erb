@@ -1,0 +1,165 @@
+    <div class="stage">
+        <div class="placer deck deal">
+        </div>
+        <div class="placer-holder lower">
+            <div class="placer deck">
+            </div>
+        </div>
+        
+            <div class="placer deck">
+            </div>
+      <a class="dealbtn">Deal</a>
+    </div>
+ 
+<style>
+    /* CSS for cardfaces from https://selfthinker.github.io/CSS-Playing-Cards/cards.css */
+    .placer, .realcard {
+      border-radius: 5px;
+      border: 3px solid #fff;
+      height: 100px;
+      width: 60px;
+      display: inline-block;
+      overflow: hidden;
+    }
+    
+    .realcard {
+      position: absolute;
+      background: #fff;
+      left: 0;
+      top: 0;
+      border: 1px solid #000;
+      -moz-transition: all 1s linear;
+      -webkit-transition: all 1s linear;
+      transition: all 1s linear;
+      z-index: 1;
+    }
+    
+    .face {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      bottom: 5px;
+      right: 5px;
+      background: url(https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTh6VpNP0XALFPhGFyidnSIaqRFK_O5_pSsT0Kj5Xu22BAOj0tY);
+      -webkit-backface-visibility: hidden;
+      -moz-backface-visibility: hidden;
+      -ms-backface-visibility: hidden;
+    }
+    
+    .face.back {
+      display: block;
+      transform: rotateY(180deg);
+      -moz-transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      color: white;
+      text-align: center;
+      background: #fff;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      right: 0;
+      bottom: 0;
+      color: #000;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .lower .deck {
+      margin: 30px 30px 0 0;
+    }
+</style>
+<script>
+        var solitaire = {
+
+            deck : [],
+
+            init: function(){
+
+                this.deck = this.makeDeck();
+                this.addDeck();
+                this.deal();
+
+            },
+
+            makeDeck: function(){
+
+                var deck = [];
+                var id = 0;
+                    for (var v=0; v < 3; v++ ) {
+                        var colour = 'red';
+                        deck.push({
+                            'id': 'realcard-' + id,
+                            'idNum': id,
+                            'posX': 0,
+                            'posY': 0,
+                        });
+                    id +=1;
+                    }
+                return solitaire.shuffleDeck(deck);
+            },
+
+            shuffleDeck: function(deck){
+                return deck;
+            },
+
+            addDeck : function(){
+                $('.deal').empty();
+                  
+                $.each(solitaire.deck, function(i, val){
+                    $('.deal').append(
+                        $('<div class="f1_container realcard"><div class="f1_realcard"><div class="front face"></div><div class="back face center rank"><span class="rank">'+'</span><span class="suit">&</span></div></div></div>')
+                    );
+                });
+              
+              $(window).trigger("resize");
+            },
+
+            deal : function(){
+
+                var i = 0;x=0;y=0;z=0;
+
+                while (i<=28){
+
+                  for (var j = 1; j <= (7-x); j++) {
+
+                    $('.deal .realcard').eq(i+j).css({
+                        "left" : $('.lower .deck').eq(j*-1).offset().left - $('.deal').offset().left,
+                        "top"  :  $('.lower .deck').eq(j*-1).offset().top - $('.deal').offset().top + z
+                    });
+
+                  };
+
+                  z += 15;
+
+                  i = i + (7-x);
+
+                  $('.deal .realcard').eq(i).addClass("flip");
+
+                  x++;
+
+                  if(x == 7) break;
+
+                }
+            }
+
+        };
+        
+        $(document).ready(function(){
+          
+          $('.dealbtn').click(function(e){
+            solitaire.init();
+            e.preventDefault();
+          });
+          
+        });
+</script>
+
+<!--내가 배팅 1개 하고 , 컴퓨터가 올인할 때 올인 알림이 2번 나오는거 확인-->
+<!--버튼 누르고 나면 다른 버튼 디스에이블드 시키기 끝 vvvv -->
+<!--상대가 1이 나올 때 포기하지 않게 하기 끝 vvvvv-->
+<!--리셋버튼 다른데다 두기-->
+<!--올인 시 상대방 최대 몇개인지 팝업 X 끝 vvvvv-->
+<!--디자인 업그레이드-->
+<!--콜(체크) 기능 있으면 좋을듯-->
+
