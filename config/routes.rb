@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get 'inpo/play2'
   post 'inpo/wingame'
   post 'inpo/losegame'
+  get 'inpo/record'
   
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

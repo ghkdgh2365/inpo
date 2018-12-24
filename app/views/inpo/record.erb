@@ -1,0 +1,25 @@
+<div class="container">
+      <table class="striped centered">
+        <thead>
+          <tr>
+              <th>No</th>
+              <th>Email</th>
+              <th>Win</th>
+              <th>Lose</th>
+          </tr>
+        </thead>
+
+        <tbody>
+            <% @i=1%>
+            <% @results.each do |r| %>
+              <tr>
+                <td><%= @i %></td>
+                <td><%= @users.find_by(id: r.user_id).email %></td>
+                <td><%= r.wins %></td>
+                <td><%= r.loses %></td>
+              </tr>
+                <% @i+=1 %>
+            <% end %>
+        </tbody>
+      </table>
+</div>

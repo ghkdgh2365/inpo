@@ -54,4 +54,9 @@ class InpoController < ApplicationController
     @result.loses += 1
     @result.save
   end
+  
+  def record
+    @users = User.all
+    @results = Gameresult.where(seasons: 1).order(wins: :desc)
+  end
 end
