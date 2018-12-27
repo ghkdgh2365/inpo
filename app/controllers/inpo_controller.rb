@@ -22,7 +22,11 @@ class InpoController < ApplicationController
   def play2
     @user = current_user.id
     @user_email = current_user.email
-    @result = Gameresult.where(user_id: @user).last
+    if Gameresult.find_by(user_id: @user) == nil
+      @result = Gameresult.new
+    else
+      @result = Gameresult.where(user_id: @user).last
+    end
     @wins = @result.wins
     @loses = @result.loses
     
