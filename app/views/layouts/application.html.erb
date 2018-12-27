@@ -42,6 +42,11 @@
               <li><a href="/" style="color: white;">Home</a></li>
               <li><a href="/inpo/record" style="color: white;">Record</a></li>
               <li><a href="/inpo/license" style="color: white;">License</a></li>
+              <% if user_signed_in? %>
+                <li><%= link_to('Log out', destroy_user_session_path, method: :delete, :style => "color:white;") %></li>
+              <% else %>
+                <li><a href="/users/sign_in" style="color: white;">Log in</a></li>
+              <% end %>
             </ul>
           </div>
         </div>
@@ -49,8 +54,13 @@
     
       <ul class="sidenav" id="mobile-demo">
         <li><a href="/">Home</a></li>
-        <li><a href="/inpo/record">record</a></li>
-        <li><a href="/inpo/license">license</a></li>
+        <li><a href="/inpo/record">Record</a></li>
+        <li><a href="/inpo/license">License</a></li>
+        <% if user_signed_in? %>
+          <li><%= link_to('Log out', destroy_user_session_path, method: :delete) %></li>
+        <% else %>
+          <li><a href="/users/sign_in">Log in</a></li>
+        <% end %>
       </ul>
     <%= yield %>
   </body>
