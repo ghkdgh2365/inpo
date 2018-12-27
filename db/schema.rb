@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_23_133024) do
+ActiveRecord::Schema.define(version: 2018_12_27_075129) do
 
   create_table "gameresults", force: :cascade do |t|
     t.integer "wins", default: 0
@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 2018_12_23_133024) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "ladder", default: 1000
+    t.float "rate", default: 0.0
     t.index ["user_id"], name: "index_gameresults_on_user_id"
   end
 

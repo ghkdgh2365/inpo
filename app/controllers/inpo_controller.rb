@@ -29,7 +29,6 @@ class InpoController < ApplicationController
     end
     @wins = @result.wins
     @loses = @result.loses
-    
   end
   
   def wingame
@@ -43,6 +42,7 @@ class InpoController < ApplicationController
     @result.user_id = @user
     @result.wins += 1
     @result.loses -= 1
+    @result.ladder += 10
     @result.save
       
   end
@@ -56,11 +56,12 @@ class InpoController < ApplicationController
     end
     @result.user_id = @user
     @result.loses += 1
+    @result.ladder -= 10
     @result.save
   end
   
   def record
     @users = User.all
-    @results = Gameresult.where(seasons: 1).order(wins: :desc)
+    @results = Gameresult.where(seasons: 1).order(ladder: :desc)
   end
 end
