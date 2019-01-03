@@ -1,0 +1,35 @@
+
+<h3 class="center">Contact</h3>
+    <div class="row container">
+      <form action="/inpo/submit" method="post" class="col s12">
+        <div class="row">
+            <div class="input-field col s12">
+              <input id="email" name="sender_email" type="email" class="validate">
+              <label for="email">Email</label>
+            </div>
+          <div class="input-field col s12">
+            <select name="category">
+              <option value="" disabled selected>Choose Category</option>
+              <option value="Ask">Ask</option>
+              <option value="Problem">Problem</option>
+              <option value="Question">Question</option>
+              <option value="Etc">Etc.</option>
+            </select>
+            <label>Category</label>
+          </div>
+          <div class="input-field col s12">
+            <textarea id="textarea2" name="content" class="materialize-textarea" data-length="1000"></textarea>
+            <label for="textarea2">Textarea</label>
+          </div>
+          <button class="btn waves-effect waves-light" style="width:100%; background-color: #ee6e73;" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </form>
+    </div>
+<script>
+  $(document).ready(function() {
+    $('select').formSelect();
+    $('textarea#textarea2').characterCounter();
+  });
+</script>

@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_075129) do
+ActiveRecord::Schema.define(version: 2019_01_03_144946) do
+
+  create_table "contacts", force: :cascade do |t|
+    t.string "category"
+    t.text "content"
+    t.string "sender_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "gameresults", force: :cascade do |t|
     t.integer "wins", default: 0

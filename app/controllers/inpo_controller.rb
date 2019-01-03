@@ -1,6 +1,7 @@
 class InpoController < ApplicationController
   skip_before_action :verify_authenticity_token
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :null_session
+  
   before_action :authenticate_user!, only: [:play2]
   def index
   end
@@ -64,5 +65,25 @@ class InpoController < ApplicationController
   def record
     @users = User.all
     @results = Gameresult.where(seasons: 1).order(ladder: :desc)
+  end
+  
+  def contact
+  end
+  
+  def submit
+    @contact = Contact.new
+    @contact.sender_email = params[:sender_email]
+    @contact.category = params[:category]
+    @contact.content = params[:content]
+    
+    
+   respond_to do |format|
+      if @contact.save
+        format.html { "<script>alert('Submit!')</script>".html_safe }
+        redirect_to '/inpo/contact'
+      else
+        format.html { redirect_to '/inpo/contact' }
+      end
+    end
   end
 end
