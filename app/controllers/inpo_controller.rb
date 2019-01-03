@@ -32,6 +32,7 @@ class InpoController < ApplicationController
   end
   
   def wingame
+    
     @user = params[:id]
       
     if Gameresult.find_by(user_id: @user) == nil
