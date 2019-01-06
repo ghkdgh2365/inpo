@@ -38,13 +38,13 @@ class InpoController < ApplicationController
       
     if Gameresult.find_by(user_id: @user) == nil
       @result = Gameresult.new
+      @result.user_id = @user
     else
       @result = Gameresult.where(user_id: @user).last
     end
-    @result.user_id = @user
     @result.wins += 1
     @result.loses -= 1
-    @result.ladder += 10
+    @result.ladder = @result.ladder + 10
     @result.save
       
   end
