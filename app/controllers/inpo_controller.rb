@@ -44,7 +44,7 @@ class InpoController < ApplicationController
     end
     @result.wins += 1
     @result.loses -= 1
-    @result.ladder = @result.ladder + 10
+    @result.ladder += 20
     @result.save
       
   end
