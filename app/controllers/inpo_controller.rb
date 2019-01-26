@@ -32,6 +32,9 @@ class InpoController < ApplicationController
     @loses = @result.loses
   end
   
+  def tutorial
+  end
+  
   def wingame
     
     @user = params[:id]

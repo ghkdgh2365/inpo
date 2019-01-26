@@ -1,0 +1,427 @@
+<div class="menu">&#x1f354;</div>
+
+<div class="content">
+    <h1>Click the tutorial listed top right ;)<span class="x"></span></h1>
+    
+    <p>Still to do: 1) Detecting if the tutorial step is going to go off screen and adjusting it accordingly. 2) With that done, add an arrow shape to tutorial step, pointing at highlighted element. 3) Some kind of minimal animation transition between each step.</p>
+    
+    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor <a href="#" class="item">invidunt</a> ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+    
+    <input class="input" placeholder="Just saying..."/>
+    
+    <button class="btn confirm">Confirm</button>
+    <button class="btn cancel">Cancel</button>
+</div>
+
+<div class="tutorial-panel">
+    <h2>Tutorials</h2>
+    
+    <ul class="tutorial-list">
+        <li data-tutorial="sample">» Sample Guide</li>
+    </ul>
+</div>
+
+<div class="tutorial-step">
+    <h3></h3>
+    <span class="x"></span>
+    <p></p>
+    <div class="tutorial-controls">
+        <button data-type="prev" class="prev-step" disabled>PREV</button>
+        <span class="steps"></span>
+        <button data-type="next" class="next-step">NEXT</button>
+    </div>
+</div>
+
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,300,800,700);
+
+$color-link: #CD950C;
+$color-confirm: forestgreen;
+$color-menu: dodgerblue;
+
+html {
+    box-sizing: border-box;
+    height: 100%;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    background: #dedede;
+    font-family: "Open Sans", Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+
+a {
+    color: $color-link;
+    text-decoration: underline;
+    
+    &:hover {
+        color: darken($color-link, 5%);
+    }
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 300;
+    margin: -20px -20px 20px -20px;
+    padding: 20px 20px 15px 20px;
+    position: relative;
+    border-bottom: 3px dashed lightgrey;
+    
+    .x {
+        right: 20px;
+        top: 20px;
+    }
+}
+
+.x {
+    color: grey;
+    position: absolute;
+    cursor: pointer;
+    
+    &:before {
+        content: 'X';
+    }
+    
+    &:hover {
+        color: darken(grey, 10%);
+    }
+}
+
+.btn {
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 10px 18px;
+    text-transform: uppercase;
+    
+    &:not(:first-child) {
+        margin-right: 10px;
+    }
+    
+    &.confirm {
+        background: $color-confirm;
+        
+        &:hover {
+            background: darken($color-confirm, 5%);
+        }
+    }
+    
+    &.cancel {
+        background: grey;
+        
+        &:hover {
+            background: darken(grey, 5%);
+        }
+    }
+}
+
+.menu {
+    background: $color-menu;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 26px;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    padding: 10px 13px;
+    
+    &:hover {
+        background: darken($color-menu, 5%);
+    }
+}
+
+.content {
+    background: #fff;
+    background: #fff;
+    margin: 60px auto 0 auto;
+    overflow: hidden;
+    padding: 20px;
+    width: 50%;
+}
+
+p {
+    font-size: 15px;
+    line-height: 22px;
+    margin-bottom: 20px;
+}
+
+input {
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 3px;
+    border: 1px solid #999;
+    font-size: 16px;
+    width: 300px;
+    padding: 8px 8px 8px 16px;
+    box-shadow: inset 4px 4px 3px -3px rgba(0,0,0,0.31);
+}
+
+.tutorial-panel {
+    background: rgba(0,0,0,0.8);
+    display: inline-block;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    
+    h2 {
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px 12px;
+    }
+}
+
+.tutorial-list {
+    padding: 12px 12px 12px 15px;
+    
+    li {
+        color: $color-link;
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 20px;
+
+        &:hover {
+            color: lighten($color-link, 15%);
+        }
+    }
+}
+
+.tutorial-step {
+    background: #343434;
+    display: none;
+    position: absolute;
+    width: 250px;
+    z-index: 101;
+    
+    h3 {
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        padding: 10px;
+        position: relative;
+    }
+    
+    .x {
+        right: 8px;
+        top: 7px;
+        font-weight: 800;
+        background: darken($color-link, 5%);
+        color: darken($color-link, 35%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 20px;
+        font-size: 12px;
+
+        &:hover {
+            background: lighten($color-link, 3%);
+        }
+    }
+    
+    p {
+        color: #fff;
+        font-size: 13px;
+        line-height: 15px;
+        padding: 10px 14px 18px 14px;
+        margin: 0;
+    }
+}
+
+.tutorial-controls {
+    text-align: center;
+    
+    .steps {
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        display: inline-block;
+        margin-top: 7px;
+    }
+    
+    button {
+        background: darken($color-link, 5%);
+        border: 0;
+        color: darken($color-link, 35%);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        padding: 8px;
+        
+        &:hover {
+            background: lighten($color-link, 3%);
+        }
+        
+        &:focus {
+            outline: 0;
+        }
+        
+        &:disabled {
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        &:first-of-type {
+            border-bottom-right-radius: 4px;
+            border-top-right-radius: 4px;
+            float: left;
+        }
+        
+        &:last-of-type{
+            border-bottom-left-radius: 4px;
+            border-top-left-radius: 4px;
+            float: right; 
+        }
+    }
+}
+
+.canvas-overlay {
+    bottom:0;
+    display: block;
+    left:0;
+    pointer-events: none;
+    position: absolute;
+    right:0;
+    top:0;
+    z-index: 100;
+}
+</style>
+<script>
+    var tutorialData = {
+    sample: {
+        title: " Sample Tutorial",
+        steps: {
+            1: {
+                selector: ".menu",
+                text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."
+            },
+            2: {
+                selector: ".content",
+                text: "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren."
+            },
+            3: {
+                selector: ".item",
+                text: "Labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."
+            },
+            4: {
+                selector: ".input",
+                text: "Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum."
+            },
+            5: {
+                selector: ".confirm",
+                text: "Diam nonumy eirmod tempor invidunt ut labore et dolore."
+            }
+        }
+    }
+}
+
+var selection;
+
+$(".tutorial-list li").on("click", function() {
+    selection = $(this).data("tutorial");
+    resetTutorial(true);
+});
+
+$(".tutorial-step .x").on("click", function(){
+    resetTutorial();
+});
+
+var beginTutorial = function() {
+    var currentStep = 1;
+    var tutorial = tutorialData[selection];
+    var steps = Object.keys(tutorial.steps).length;
+    
+    $(".tutorial-step h3").text(tutorial.title);
+    generateStep(tutorial.steps[1], currentStep, steps);
+    
+    $(".tutorial-step").fadeIn(200);
+    
+    $(".tutorial-controls button").on("click", function(){
+        var type = $(this).data("type");
+        
+        if(type === "next"){
+            currentStep++;
+            if(currentStep === steps) {
+                $(this).prop("disabled", true);
+            }
+            $(".prev-step").prop("disabled", false);
+        }
+        else {
+            currentStep--;
+            if(currentStep === 1) {
+                $(this).prop("disabled", true);
+            }
+            $(".next-step").prop("disabled", false);
+        }
+        generateStep(tutorial.steps[currentStep], currentStep, steps);
+    });
+}
+
+var resetTutorial = function(newTutorial) {
+        $(".canvas-overlay").fadeOut(200, function(){
+            $(this).remove();
+        });
+        $(".tutorial-step").fadeOut(200,function(){
+        $(".tutorial-step h3").empty();
+        $(".tutorial-step p").empty();
+        $(".tutorial-step .steps").empty();
+        $(".prev-step").prop("disabled", true);
+        $(".next-step").prop("disabled", false);
+        $(".tutorial-controls button").unbind();
+        
+        if(newTutorial) {
+            beginTutorial();
+        }
+    });
+}
+
+var generateStep = function(tutorial, currentStep, steps) {
+    var target = $(tutorial.selector);
+    
+    $(".tutorial-step p").text(tutorial.text);
+    $(".tutorial-step .steps").text(currentStep +"/"+ steps);
+
+    var targetPosition = target.offset();
+    targetPosition["width"] = target.outerWidth();
+    targetPosition["height"] = target.outerHeight();
+    var posY = targetPosition.top;
+    var posX = targetPosition.left + targetPosition.width + 15;
+
+    $(".tutorial-step").css({
+        "top": posY,
+        "left": posX
+    });
+    
+    $(".canvas-overlay").remove();
+    generateOverlay(targetPosition);
+}
+
+var generateOverlay = function(targetPosition) {
+    var elementID = "canvas" + $("canvas").length;
+    var width = window.innerWidth, height = window.innerHeight;
+    
+    $('<canvas>').attr({
+        id: elementID,
+        class: "canvas-overlay"
+    }).appendTo('body');
+
+    var canvas = document.getElementById(elementID);
+    var context = canvas.getContext("2d");
+
+    context.canvas.width  = width;
+    context.canvas.height = height;
+    context.fillStyle="rgba(0,0,0,0.5)";
+    context.fillRect(0, 0, width, height);
+    context.clearRect(targetPosition.left, targetPosition.top, targetPosition["width"], targetPosition["height"]);
+}
+</script>
